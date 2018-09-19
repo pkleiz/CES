@@ -1,0 +1,91 @@
+unsign FAT1, FAT2, PROD;
+
+void MULT(){
+	PROD=0; FAT2 = -FAT2;
+	while ( FAT1 ) { FAT1--; PROD = PROD - FAT2; }
+	halt;
+	}
+
+
+unsign FAT1, FAT2, PROD;
+
+void MULT(){
+	PROD=0;
+	SOMAFAT: if ( FAT1 ) { FAT1--; PROD = PROD + FAT2; GOTO SOMAFAT; }
+	halt;
+	}
+
+
+
+00: LM ender	0000h+ender
+01: EM ender	4000h+ender
+10: SB ender	8000h+ender
+11: DNP ender	0C000h+ender
+
+
+		ZERO:	IGU 0000h
+		UM:	IGU 0001h
+		FFFF:	IGU 001Fh
+
+		FAT1:	IGU 1000h
+		FAT2:	IGU 1001h
+		PROD: 	IGU 1002h
+
+0400h: 0000h	MULT:	LM  ZERO	; //T = 0
+0401h: 5002h		EM  PROD	; PROD = 0
+0402H: 1001h		LM  FAT2	; //T=FAT2
+0403h: 8000h		SB  ZERO	; //T=0-FAT2
+0404h: 5001h		EM  FAT2	; FAT2=0-FAT2
+0405h: 1000h	SOMAFAT:LM  FAT1	; //T = FAT1
+0406h: 8000h		SB  ZERO	; //T=0-FAT1
+0407h: C407h	PARAPR:	DNP PARAPR	;
+0408h: 0001h		LM  UM		; //T = 1
+0409h: 9000h		SB  FAT1	; //T = FAT1 - 1
+040Ah: 5000h		EM  FAT1	; FAT1 = FAT1 - 1
+040Bh: 1001h		LM  FAT2	; //T = FAT2
+040Ch: 9002h		SB  PROD	; //T = PROD - ( 0 - FAT2 )
+040Dh: 5002h		EM  PROD	; PROD = PROD + FAT2
+040Eh: 801Fh		SB  FFFF	; // T = 0FFFFh - T
+040Fh: C405h		DNP SOMAFAT	; >> SOMAFAT
+
+
+unsign FAT1, FAT2, PROD;
+
+void MULT(){
+	PROD=0; FAT2 = -FAT2;
+	if ( FAT2 ) íf ( FAT1 ) 
+	   do { PROD = PROD - FAT2; FAT1--; } while ( FAT1 != 0 );
+	halt;
+	}
+
+		ZERO:	IGU 0000h
+		UM:	IGU 0001h
+		FFFF:	IGU 001Fh
+
+		FAT1:	IGU 1000h
+		FAT2:	IGU 1001h
+		PROD: 	IGU 1002h
+
+
+0400h: 0000h	MULT:	LM  ZERO	; //T = 0
+0401h: 5002h		EM  PROD	; 		PROD = 0
+0402H: 1001h		LM  FAT2	; //T=FAT2
+0403h: 8000h		SB  ZERO	; //T=0-FAT2, PEDE se FAT2 <> 0
+			DNP PARAPR	; 		SE FAT2 == 0 >>>> PARAPR
+0404h: 5001h		EM  FAT2	; 		FAT2=0-FAT2
+			LM  FAT1	; //T=FAT1
+0405h: 			SB  ZERO	; //T = 0-FAT1, PEDE se FAT1 <> 0
+			DNP PARAPR	;		SE FAT1 == 0 >>>> PARAPR
+
+
+040Bh: 1001h	SOMAFAT:LM  FAT2	; //T = FAT2
+040Ch: 9002h		SB  PROD	; //T = PROD - ( 0 - FAT2 )
+040Dh: 5002h		EM  PROD	; PROD = PROD + FAT2
+
+			LM  UM		; // T=1
+			SB  FAT1	; // T=FAT1-1, PEDE se FAT1 == 0
+			EM  FAT1
+040Fh: C405h		DNP SOMAFAT	; SE FAT1 <> FFFFH >>>> SOMAFAT
+
+			SB  FFFF
+		PARAPR:	DNP PARAPR

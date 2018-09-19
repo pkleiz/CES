@@ -1,0 +1,57 @@
+unsign FAT1, FAT2, PROD;
+
+void MULT()
+	{
+		PROD=0;
+
+		while( FAT1 )
+		{
+			FAT1--;
+			PROD = PROD + FAT2;
+		}
+
+		halt;
+	}
+
+
+unsign FAT1, FAT2, PROD;
+
+void MULT()
+	{
+		PROD=0;
+		SOMAFAT:
+		if ( FAT1 )
+		{
+			FAT1--;
+			PROD = PROD + FAT2;
+			GOTO SOMAFAT;
+		}
+
+		halt;
+	}
+
+
+
+00: LM ender	0000h+ender		ZERO:	IGU 0000h
+01: EM ender	4000h+ender		UM:	IGU 0001h
+10: SB ender	8000h+ender		FFFF:	IGU 001Fh
+11: DNP ender	0C000h+ender
+
+		FAT1:	IGU 1000h
+		FAT2:	IGU 1001h
+		PROD: 	IGU 1002h
+
+0400h: 0000h	MULT:	LM  ZERO	; //T = 0			//le zero da rom e coloca no registrador de trabalho
+0401h: 5002h		EM  PROD	; PROD = 0			//escreve na posição de memoria 1002 o número 0
+0402h: 1000h	SOMAFAT:LM  FAT1	; //T = FAT1			//le da posiçao 1000 o número e coloca no registrador de tabalho
+0403h: 8000h		SB  ZERO	; T = 0 - FAT1			//subtrai zero do registrador de trabalho, invertendo o sinal
+0404h: C404h	PARAPR:	DNP PARAPR	; SE não pede? >> PARAPR	//se pedir emprestado ele continua, senão ele para o programa
+0405h: 0001h		LM  UM		; //T = 1			//le um da rom e coloca no registrador de trabalho
+0406h: 9000h		SB  FAT1	; //T = FAT1 - 1		//subtrai 1 do valor localizado na posição de mem. 1000 e o result. em t
+0407h: 5000h		EM  FAT1	; FAT1 = FAT1 - 1		//escreve na posição 1000 o novo valor contido no registrador de trabalho
+0408h: 1001h		LM  FAT2	; //T = FAT2			//le da posição 1001 o valor e coloca no regisrador de trabalho
+0409h: 8000h		SB  ZERO	; //T = 0 - FAT2		//subtrai zero do registrador de trabalho e coloca o resultado em t
+040Ah: 9002h		SB  PROD	; //T = PROD - ( 0 - FAT2 )	//subtrai o valor localizado em 1002 do registrador de trabalho
+040Bh: 5002h		EM  PROD	; PROD = PROD + FAT2		//escreve o valor do registrador de trabalho na posição 1002
+040Ch: 801Fh		SB  FFFF	; // T = 0FFFFh - T		//garante que o valor nunca pegue emprestado para que na prox. tenha o desvio
+040Dh: C402h		DNP SOMAFAT	; >> SOMAFAT			//volta pra posição 402 se não pede emprestado
