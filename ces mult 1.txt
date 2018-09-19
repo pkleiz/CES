@@ -1,17 +1,32 @@
 unsign FAT1, FAT2, PROD;
 
-void MULT(){
-	PROD=0; FAT2 = -FAT2;
-	while ( FAT1 ) { FAT1--; PROD = PROD - FAT2; }
+void MULT()
+	{
+		PROD=0;
+		FAT2 = -FAT2;
+
+		while ( FAT1 )
+		{
+			FAT1--;
+			PROD = PROD - FAT2;
+		}
 	halt;
 	}
 
 
 unsign FAT1, FAT2, PROD;
 
-void MULT(){
-	PROD=0;
-	SOMAFAT: if ( FAT1 ) { FAT1--; PROD = PROD + FAT2; GOTO SOMAFAT; }
+void MULT()
+	{
+		PROD=0;
+		SOMAFAT:
+		if ( FAT1 )
+		{
+			FAT1--;
+			PROD = PROD + FAT2;
+			GOTO SOMAFAT;
+		}
+
 	halt;
 	}
 
@@ -51,10 +66,19 @@ void MULT(){
 
 unsign FAT1, FAT2, PROD;
 
-void MULT(){
-	PROD=0; FAT2 = -FAT2;
-	if ( FAT2 ) íf ( FAT1 ) 
-	   do { PROD = PROD - FAT2; FAT1--; } while ( FAT1 != 0 );
+void MULT()
+	{
+		PROD=0;
+		FAT2 = -FAT2;
+
+		if ( FAT2 )
+			if ( FAT1 ) 
+	   			do
+				{
+					PROD = PROD - FAT2;
+					FAT1--;
+				}
+				while ( FAT1 != 0 );
 	halt;
 	}
 

@@ -55,3 +55,10 @@ void MULT()
 040Bh: 5002h		EM  PROD	; PROD = PROD + FAT2		//escreve o valor do registrador de trabalho na posição 1002
 040Ch: 801Fh		SB  FFFF	; // T = 0FFFFh - T		//garante que o valor nunca pegue emprestado para que na prox. tenha o desvio
 040Dh: C402h		DNP SOMAFAT	; >> SOMAFAT			//volta pra posição 402 se não pede emprestado
+
+
+1000 = 3,2
+1001 = 4
+
+t = 0, 3, FFFD, 1, 2, 4, FFFC, 
+1002 = 0, FFFC
